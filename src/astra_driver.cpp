@@ -1042,6 +1042,36 @@ std::string AstraDriver::resolveDeviceURI(const std::string& device_id)
 
     THROW_OPENNI_EXCEPTION("Device not found %s", device_id.c_str());
   }
+  // look for '<vendor ID>/<product ID>' format
+  else if (device_id.size() > 1 && device_id.find('@') == std::string::npos && device_id.find('/') != std::string::npos)
+  {
+    // get index of @ character
+    size_t index = device_id.find('/');
+    if (index <= 0)
+    {
+      THROW_OPENNI_EXCEPTION(
+        "%s is not a valid device URI, you must give the vendor ID before the /.",
+        device_id.c_str());
+    }
+    if (index >= device_id.size() - 1)
+    {
+      THROW_OPENNI_EXCEPTION(
+        "%s is not a valid device URI, you must give a product ID after the /.",
+        device_id.c_str());
+    }
+
+    for (size_t i = 0; i < available_device_URIs->size(); ++i)
+    {
+      std::string s = (*available_device_URIs)[i];
+      if (s.find(device_id) != std::string::npos)
+      {
+        // this matches our bus, check device number
+        return s;
+      }
+    }
+
+    THROW_OPENNI_EXCEPTION("Device not found %s", device_id.c_str());
+  }
   else
   {
     // check if the device id given matches a serial number of a connected device
