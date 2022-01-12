@@ -162,15 +162,11 @@ void AstraDriver::advertiseROSTopics()
 {
 
   // Allow remapping namespaces rgb, ir, depth, depth_registered
-  ros::NodeHandle color_nh(nh_, "rgb");
-  image_transport::ImageTransport color_it(color_nh);
-  ros::NodeHandle ir_nh(nh_, "ir");
-  image_transport::ImageTransport ir_it(ir_nh);
-  ros::NodeHandle depth_nh(nh_, "depth");
-  image_transport::ImageTransport depth_it(depth_nh);
-  ros::NodeHandle depth_raw_nh(nh_, "depth");
-  image_transport::ImageTransport depth_raw_it(depth_raw_nh);
-  ros::NodeHandle projector_nh(nh_, "projector");
+  image_transport::ImageTransport color_it(pnh_);
+  image_transport::ImageTransport ir_it(pnh_);
+  image_transport::ImageTransport depth_it(pnh_);
+  image_transport::ImageTransport depth_raw_it(pnh_);
+  ros::NodeHandle projector_nh(pnh_, "projector");
   // Advertise all published topics
 
   // Prevent connection callbacks from executing until we've set all the publishers. Otherwise
@@ -185,22 +181,22 @@ void AstraDriver::advertiseROSTopics()
   {
     image_transport::SubscriberStatusCallback itssc = boost::bind(&AstraDriver::imageConnectCb, this);
     ros::SubscriberStatusCallback rssc = boost::bind(&AstraDriver::imageConnectCb, this);
-    pub_color_ = color_it.advertiseCamera("image", 1, itssc, itssc, rssc, rssc);
+    pub_color_ = color_it.advertiseCamera("rgb", 1, itssc, itssc, rssc, rssc);
   }
 
   if (device_->hasIRSensor())
   {
     image_transport::SubscriberStatusCallback itssc = boost::bind(&AstraDriver::imageConnectCb, this);
     ros::SubscriberStatusCallback rssc = boost::bind(&AstraDriver::imageConnectCb, this);
-    pub_ir_ = ir_it.advertiseCamera("image", 1, itssc, itssc, rssc, rssc);
+    pub_ir_ = ir_it.advertiseCamera("ir", 1, itssc, itssc, rssc, rssc);
   }
 
   if (device_->hasDepthSensor())
   {
     image_transport::SubscriberStatusCallback itssc = boost::bind(&AstraDriver::depthConnectCb, this);
     ros::SubscriberStatusCallback rssc = boost::bind(&AstraDriver::depthConnectCb, this);
-    pub_depth_raw_ = depth_it.advertiseCamera("image_raw", 1, itssc, itssc, rssc, rssc);
-    pub_depth_ = depth_raw_it.advertiseCamera("image", 1, itssc, itssc, rssc, rssc);
+    pub_depth_raw_ = depth_it.advertiseCamera("depth_raw", 1, itssc, itssc, rssc, rssc);
+    pub_depth_ = depth_raw_it.advertiseCamera("depth", 1, itssc, itssc, rssc, rssc);
     pub_projector_info_ = projector_nh.advertise<sensor_msgs::CameraInfo>("camera_info", 1, rssc, rssc);
   }
 
@@ -221,8 +217,8 @@ void AstraDriver::advertiseROSTopics()
   ir_name  = "depth_" + serial_number;
 
   // Load the saved calibrations, if they exist
-  color_info_manager_ = boost::make_shared<camera_info_manager::CameraInfoManager>(color_nh, color_name, color_info_url_);
-  ir_info_manager_  = boost::make_shared<camera_info_manager::CameraInfoManager>(ir_nh,  ir_name,  ir_info_url_);
+  color_info_manager_ = boost::make_shared<camera_info_manager::CameraInfoManager>(pnh_, color_name, color_info_url_);
+  ir_info_manager_  = boost::make_shared<camera_info_manager::CameraInfoManager>(pnh_,  ir_name,  ir_info_url_);
 
   get_serial_server = nh_.advertiseService("get_serial", &AstraDriver::getSerialCb, this);
   get_device_type_server = nh_.advertiseService("get_device_type", &AstraDriver::getDeviceTypeCb, this);
