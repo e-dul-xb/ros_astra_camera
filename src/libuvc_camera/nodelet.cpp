@@ -32,7 +32,6 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 #include <ros/ros.h>
-#include <pluginlib/class_list_macros.h>
 #include <nodelet/nodelet.h>
 
 #include "libuvc_camera/camera_driver.h"
@@ -75,4 +74,5 @@ void CameraNodelet::onInit() {
 // Register this plugin with pluginlib.
 //
 // parameters are: class type, base class type
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(libuvc_camera::CameraNodelet, nodelet::Nodelet)

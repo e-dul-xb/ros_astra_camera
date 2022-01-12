@@ -113,12 +113,6 @@ add_library(astra_driver_lib
 target_link_libraries(astra_driver_lib astra_wrapper ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
 add_dependencies(astra_driver_lib ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
-add_library(astra_camera_nodelet
-   ros/astra_camera_nodelet.cpp
-)
-target_link_libraries(astra_camera_nodelet astra_driver_lib ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
-add_dependencies(astra_camera_nodelet ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
-
 add_executable(astra_camera_node
    ros/astra_camera_node.cpp
 )
@@ -148,6 +142,14 @@ add_library(libuvc_camera_nodelet src/libuvc_camera/nodelet.cpp
                                   src/astra_device_type.cpp)
 target_link_libraries(libuvc_camera_nodelet ${libuvc_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(libuvc_camera_nodelet ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
+
+add_library(astra_camera_nodelet
+   ros/astra_camera_nodelet.cpp
+   src/libuvc_camera/nodelet.cpp
+   src/libuvc_camera/camera_driver.cpp
+)
+target_link_libraries(astra_camera_nodelet astra_driver_lib ${libuvc_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
+add_dependencies(astra_camera_nodelet ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 install(TARGETS astra_wrapper astra_camera_nodelet astra_camera_node astra_list_devices astra_driver_lib ${ADDITIONAL_EXECUTABLES}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
