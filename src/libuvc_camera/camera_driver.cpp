@@ -57,6 +57,8 @@ CameraDriver::CameraDriver(ros::NodeHandle nh, ros::NodeHandle priv_nh)
     config_server_(mutex_, priv_nh_),
     config_changed_(false),
     cinfo_manager_(nh) {
+  ros::NodeHandle color_nh(nh_, "rgb");
+  it_ = image_transport::ImageTransport(color_nh);
   cam_pub_ = it_.advertiseCamera("image_raw", 1, false);
   device_type_client = nh_.serviceClient<astra_camera::GetDeviceType>("get_device_type");
   camera_info_client = nh_.serviceClient<astra_camera::GetCameraInfo>("get_camera_info");
@@ -70,16 +72,6 @@ CameraDriver::CameraDriver(ros::NodeHandle nh, ros::NodeHandle priv_nh)
   camera_info_init_ = false;
   uvc_flip_ = 0;
   device_type_no_ = OB_ASTRA_NO;
-  ns = ros::this_node::getNamespace();
-  int slash_end;
-  for (slash_end = 0; slash_end < ns.length(); slash_end++)
-  {
-    if (ns[slash_end] != '/')
-    {
-      break;
-    }
-  }
-  ns_no_slash = ns.substr(slash_end);
   camera_info_valid_ = false;
 }
 
@@ -378,8 +370,8 @@ void CameraDriver::ImageCallback(uvc_frame_t *frame) {
         cinfo->P[i] = camera_info_.P[i];
       }
     }
-    image->header.frame_id = ns_no_slash + "_rgb_optical_frame";
-    cinfo->header.frame_id = ns_no_slash + "_rgb_optical_frame";
+    image->header.frame_id = camera_info_.header.frame_id;
+    cinfo->header.frame_id = camera_info_.header.frame_id;
   }
   else
   {
