@@ -30,6 +30,7 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
+#include <ros/callback_queue.h>
 #include "astra_camera/astra_driver.h"
 #include <nodelet/nodelet.h>
 
@@ -46,10 +47,19 @@ public:
 private:
   virtual void onInit()
   {
-    lp.reset(new astra_wrapper::AstraDriver(getNodeHandle(), getPrivateNodeHandle()));
+    nh_ = getNodeHandle();
+    pnh_ = getPrivateNodeHandle();
+    nh_.setCallbackQueue(&queue_);
+    pnh_.setCallbackQueue(&queue_);
+    spinner_.start();
+    driver_ = boost::make_shared<astra_wrapper::AstraDriver>(nh_, pnh_);
   };
 
-  boost::shared_ptr<astra_wrapper::AstraDriver> lp;
+  ros::CallbackQueue queue_;
+  ros::AsyncSpinner spinner_{1, &queue_};
+  ros::NodeHandle nh_;
+  ros::NodeHandle pnh_;
+  boost::shared_ptr<astra_wrapper::AstraDriver> driver_;
 };
 
 }
