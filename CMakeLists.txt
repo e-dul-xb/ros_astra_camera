@@ -103,9 +103,9 @@ add_library(astra_wrapper
    src/astra_device_type.cpp
 )
 target_link_libraries(astra_wrapper PRIVATE ${ORBBEC_OPENNI2_REDIST}/libOpenNI2Orbbec.so 
-${ORBBEC_OPENNI2_REDIST}/OpenNI2/Drivers/libOniFile.so
+${ORBBEC_OPENNI2_REDIST}/OpenNI2/Drivers/libOniFileOrbbec.so
 ${ORBBEC_OPENNI2_REDIST}/OpenNI2/Drivers/liborbbec.so
-${ORBBEC_OPENNI2_REDIST}/OpenNI2/Drivers/libPSLink.so 
+${ORBBEC_OPENNI2_REDIST}/OpenNI2/Drivers/libPSLinkOrbbec.so 
   ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(astra_wrapper ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 #set_property(TARGET astra_wrapper PROPERTY POSITION_INDEPENDENT_CODE ON)
