@@ -84,13 +84,13 @@ link_directories(${ORBBEC_OPENNI2_REDIST}
 #MESSAGE(STATUS "ORRBEC : ${ORBBEC_OPENNI2_REDIST}")
 
 include_directories(include
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/openni2
                     ${catkin_INCLUDE_DIRS}
                     ${Boost_INCLUDE_DIRS}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/openni2
                     ${libuvc_INCLUDE_DIRS}
                     )
 
-
+message(ERROR " catkin_LIBRARIES : ${catkin_LIBRARIES}")
 add_library(astra_wrapper
    src/astra_convert.cpp
    src/astra_device.cpp
@@ -102,30 +102,30 @@ add_library(astra_wrapper
    src/astra_video_mode.cpp
    src/astra_device_type.cpp
 )
-target_link_libraries(astra_wrapper ${catkin_LIBRARIES} -lOpenNI2  -L${ORBBEC_OPENNI2_REDIST}
-  ${Boost_LIBRARIES} )
+target_link_libraries(astra_wrapper PRIVATE ${ORBBEC_OPENNI2_REDIST}/libOpenNI2.so
+  ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(astra_wrapper ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 add_library(astra_driver_lib
                 src/astra_driver.cpp
                 src/astra_device_type.cpp
 )
-target_link_libraries(astra_driver_lib astra_wrapper ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
+target_link_libraries(astra_driver_lib PRIVATE astra_wrapper ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
 add_dependencies(astra_driver_lib ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(astra_camera_node
    ros/astra_camera_node.cpp
 )
-target_link_libraries(astra_camera_node astra_driver_lib ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
+target_link_libraries(astra_camera_node PRIVATE astra_driver_lib ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
 add_dependencies(astra_camera_node ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(astra_list_devices
    src/list_devices.cpp
 )
-target_link_libraries(astra_list_devices astra_wrapper)
+target_link_libraries(astra_list_devices PRIVATE astra_wrapper ${Boost_LIBRARIES})
 
 add_executable(astra_test_wrapper test/test_wrapper.cpp )
-target_link_libraries(astra_test_wrapper astra_wrapper ${Boost_LIBRARIES})
+target_link_libraries(astra_test_wrapper PRIVATE astra_wrapper ${Boost_LIBRARIES})
 if (UNIX AND NOT APPLE)
   add_executable(astra_usb_reset src/usb_reset.c)
   set(ADDITIONAL_EXECUTABLES "astra_usb_reset")
@@ -134,13 +134,13 @@ endif()
 add_executable(camera_node src/libuvc_camera/main.cpp
                            src/libuvc_camera/camera_driver.cpp
                            src/astra_device_type.cpp)
-target_link_libraries(camera_node ${libuvc_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(camera_node PRIVATE ${libuvc_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(camera_node ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 add_library(libuvc_camera_nodelet src/libuvc_camera/nodelet.cpp
                                   src/libuvc_camera/camera_driver.cpp
                                   src/astra_device_type.cpp)
-target_link_libraries(libuvc_camera_nodelet ${libuvc_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(libuvc_camera_nodelet PRIVATE ${libuvc_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(libuvc_camera_nodelet ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 add_library(astra_camera_nodelet
@@ -148,7 +148,7 @@ add_library(astra_camera_nodelet
    src/libuvc_camera/nodelet.cpp
    src/libuvc_camera/camera_driver.cpp
 )
-target_link_libraries(astra_camera_nodelet astra_driver_lib ${libuvc_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
+target_link_libraries(astra_camera_nodelet PRIVATE astra_driver_lib ${libuvc_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
 add_dependencies(astra_camera_nodelet ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 install(TARGETS astra_wrapper astra_camera_nodelet astra_camera_node astra_list_devices astra_driver_lib ${ADDITIONAL_EXECUTABLES}
