@@ -91,7 +91,7 @@ include_directories(include
                     )
 
 message(ERROR " catkin_LIBRARIES : ${catkin_LIBRARIES}")
-add_library(astra_wrapper
+add_library(astra_wrapper STATIC
    src/astra_convert.cpp
    src/astra_device.cpp
    src/astra_device_info.cpp
@@ -105,6 +105,7 @@ add_library(astra_wrapper
 target_link_libraries(astra_wrapper PRIVATE ${ORBBEC_OPENNI2_REDIST}/libOpenNI2.so
   ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(astra_wrapper ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
+set_property(TARGET astra_wrapper PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_library(astra_driver_lib
                 src/astra_driver.cpp
