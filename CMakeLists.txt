@@ -102,8 +102,11 @@ add_library(astra_wrapper
    src/astra_video_mode.cpp
    src/astra_device_type.cpp
 )
-target_link_libraries(astra_wrapper ${catkin_LIBRARIES} -lOpenNI2  -L${ORBBEC_OPENNI2_REDIST}
-  ${Boost_LIBRARIES} )
+
+target_link_libraries(astra_wrapper PUBLIC ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+target_link_libraries(astra_wrapper PRIVATE -L${ORBBEC_OPENNI2_REDIST} -lOpenNI2)
+
 add_dependencies(astra_wrapper ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
 
 add_library(astra_driver_lib
