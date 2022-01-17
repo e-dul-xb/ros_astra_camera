@@ -91,7 +91,7 @@ include_directories(include
                     )
 
 message(ERROR " catkin_LIBRARIES : ${catkin_LIBRARIES}")
-add_library(astra_wrapper STATIC
+add_library(astra_wrapper
    src/astra_convert.cpp
    src/astra_device.cpp
    src/astra_device_info.cpp
@@ -102,10 +102,10 @@ add_library(astra_wrapper STATIC
    src/astra_video_mode.cpp
    src/astra_device_type.cpp
 )
-target_link_libraries(astra_wrapper PRIVATE ${ORBBEC_OPENNI2_REDIST}/libOpenNI2.so
+target_link_libraries(astra_wrapper PRIVATE ${ORBBEC_OPENNI2_REDIST}/libOpenNI2Orbbec.so
   ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(astra_wrapper ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
-set_property(TARGET astra_wrapper PROPERTY POSITION_INDEPENDENT_CODE ON)
+#set_property(TARGET astra_wrapper PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_library(astra_driver_lib
                 src/astra_driver.cpp
@@ -113,6 +113,7 @@ add_library(astra_driver_lib
 )
 target_link_libraries(astra_driver_lib PRIVATE astra_wrapper ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
 add_dependencies(astra_driver_lib ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
+set_property(TARGET astra_driver_lib PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_executable(astra_camera_node
    ros/astra_camera_node.cpp
@@ -158,7 +159,7 @@ install(TARGETS astra_wrapper astra_camera_nodelet astra_camera_node astra_list_
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
 
-install(FILES include/openni2_redist/${HOST_PLATFORM}/libOpenNI2.so
+install(FILES include/openni2_redist/${HOST_PLATFORM}/libOpenNI2Orbbec.so
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}/
 )
 
