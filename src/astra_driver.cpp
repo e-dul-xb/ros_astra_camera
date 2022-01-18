@@ -156,6 +156,8 @@ AstraDriver::AstraDriver(ros::NodeHandle& n, ros::NodeHandle& pnh) :
   ROS_DEBUG("Dynamic reconfigure configuration received.");
 
   advertiseROSTopics();
+
+  PublishTransform();
 }
 
 AstraDriver::~AstraDriver() {
