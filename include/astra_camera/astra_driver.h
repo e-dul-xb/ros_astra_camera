@@ -45,6 +45,7 @@
 
 #include <image_transport/image_transport.h>
 #include <camera_info_manager/camera_info_manager.h>
+#include <tf2_ros/static_transform_broadcaster.h>
 
 #include <string>
 #include <vector>
@@ -132,6 +133,8 @@ private:
   void setColorVideoMode(const AstraVideoMode& color_video_mode);
   void setDepthVideoMode(const AstraVideoMode& depth_video_mode);
 
+  void PublishTransform();
+
   ros::NodeHandle& nh_;
   ros::NodeHandle& pnh_;
 
@@ -217,6 +220,8 @@ private:
 
   Config old_config_;
   int uvc_flip_;
+
+  tf2_ros::StaticTransformBroadcaster tf_broadcaster_;
 };
 
 }

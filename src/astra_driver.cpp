@@ -44,6 +44,10 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread.hpp>
 
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2/LinearMath/Transform.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+
 #define  MULTI_ASTRA 1
 namespace astra_wrapper
 {
@@ -1369,6 +1373,29 @@ sensor_msgs::ImageConstPtr AstraDriver::rawToFloatingPointConversion(sensor_msgs
   }
 
   return new_image;
+}
+
+void AstraDriver::PublishTransform() {
+  const auto camera_params = device_->getCameraParams();
+
+  geometry_msgs::TransformStamped transform_stamped;
+
+  const tf2::Matrix3x3 rotation_matrix(camera_params.r2l_r[0], camera_params.r2l_r[1], camera_params.r2l_r[2],
+                                      camera_params.r2l_r[3], camera_params.r2l_r[4], camera_params.r2l_r[5],
+                                      camera_params.r2l_r[6], camera_params.r2l_r[7], camera_params.r2l_r[8]);
+  tf2::Quaternion quaternion;
+  rotation_matrix.getRotation(quaternion);
+
+  tf2::Transform tf;
+  tf.setRotation(quaternion);
+  // using '* 0.001' to convert from mm to m
+  tf.setOrigin(tf2::Vector3(camera_params.r2l_t[0] * 0.001, camera_params.r2l_t[1] * 0.001, camera_params.r2l_t[2] * 0.001));
+
+  transform_stamped.transform = tf2::toMsg(tf.inverse());
+  transform_stamped.header.stamp = ros::Time::now();
+  transform_stamped.header.frame_id = depth_frame_id_;
+  transform_stamped.child_frame_id = color_frame_id_;
+  tf_broadcaster_.sendTransform(transform_stamped);
 }
 
 }
