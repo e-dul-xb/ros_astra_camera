@@ -19,7 +19,8 @@
   <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>image_transport</build_depend>
   <build_depend>message_generation</build_depend>
-  <build_depend>libuvc</build_depend>
+  <build_depend condition="$ROS_DISTRO != noetic">libuvc</build_depend>
+  <build_depend condition="$ROS_DISTRO == noetic">libuvc-dev</build_depend>
   <build_depend>tf2_geometry_msgs</build_depend>
 
   <run_depend>camera_info_manager</run_depend>
