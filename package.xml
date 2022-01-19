@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="3">
   <name>astra_camera</name>
   <version>0.3.0</version>
   <description>Drivers for Orbbec Astra Devices. </description>
@@ -23,15 +23,15 @@
   <build_depend condition="$ROS_DISTRO == noetic">libuvc-dev</build_depend>
   <build_depend>tf2_geometry_msgs</build_depend>
 
-  <run_depend>camera_info_manager</run_depend>
-  <run_depend>nodelet</run_depend>
-  <run_depend>dynamic_reconfigure</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>image_transport</run_depend>
-  <run_depend>message_runtime</run_depend>
-  <run_depend>rgbd_launch</run_depend>
-  <run_depend>tf2_geometry_msgs</run_depend>
+  <exec_depend>camera_info_manager</exec_depend>
+  <exec_depend>nodelet</exec_depend>
+  <exec_depend>dynamic_reconfigure</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>rgbd_launch</exec_depend>
+  <exec_depend>tf2_geometry_msgs</exec_depend>
 
   <export>
     <nodelet plugin="${prefix}/astra_nodelets.xml"/>
